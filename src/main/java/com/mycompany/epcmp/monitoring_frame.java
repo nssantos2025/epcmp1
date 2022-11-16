@@ -10,6 +10,8 @@ import com.mycompany.epcmp.Comunicacao.ClienteMestre;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,7 +24,8 @@ public class monitoring_frame extends javax.swing.JFrame {
     public static int Quantidade_Divisoes;
     public static int Porta_inicial_de_conexao;
     public static ClienteMestre clienteMestre;
-        
+    public static boolean presbtnCarregar = false; 
+    public static boolean presbtnComecar = false;
     /**
      * Creates new form monitoring_frame
      */
@@ -55,6 +58,8 @@ public class monitoring_frame extends javax.swing.JFrame {
         btnStart = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
         btnCarregar = new javax.swing.JButton();
+        btnResetar = new javax.swing.JButton();
+        btnVoltar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -92,7 +97,7 @@ public class monitoring_frame extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tbStatusMics);
 
-        btnStart.setText("Start");
+        btnStart.setText("Começar");
         btnStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnStartActionPerformed(evt);
@@ -113,24 +118,43 @@ public class monitoring_frame extends javax.swing.JFrame {
             }
         });
 
+        btnResetar.setText("Resetar");
+        btnResetar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetarActionPerformed(evt);
+            }
+        });
+
+        btnVoltar.setText("Voltar");
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(lbNumeroNucleos, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnCarregar)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btnStart)))
-                    .addComponent(btnClose))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbNumeroNucleos, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCarregar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnStart))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnClose)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnVoltar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(324, 324, 324)
+                        .addComponent(btnResetar)))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -144,11 +168,15 @@ public class monitoring_frame extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnStart)
                         .addComponent(btnCarregar)))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnResetar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnClose)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClose)
+                    .addComponent(btnVoltar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -156,7 +184,16 @@ public class monitoring_frame extends javax.swing.JFrame {
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
         // TODO add your handling code here:
-        clienteMestre.setFaseStart(true);
+        if(presbtnCarregar){
+            DefaultTableModel dtmTabela =(DefaultTableModel) tbStatusMics.getModel();
+            clienteMestre.setFaseStart(true);
+            for(int i=0;i<Quantidade_Divisoes;i++){
+                dtmTabela.setValueAt("Processo Iniciado", i,1);
+            }
+            presbtnComecar=true;
+        }else{
+            JOptionPane.showMessageDialog(null, "Antes de Começar o Processo é Necessario Carregar o Codigo Nos Simuladores","Alerta",JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnStartActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -184,13 +221,74 @@ public class monitoring_frame extends javax.swing.JFrame {
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         // TODO add your handling code here:
+        DefaultTableModel dtmTabela =(DefaultTableModel) tbStatusMics.getModel();
         clienteMestre.setFaseClose(true);
+        for(int i=0;i<Quantidade_Divisoes;i++){
+            //String nome_atual_rep = Nome_Arquivo+i;
+            //String[] linha = {nome_atual_rep,"Fechado"};
+            //0dtmTabela.addRow(linha);
+            dtmTabela.setValueAt("Fechado",i,1);
+        }
+        try {
+            clienteMestre.fechar_conexao();
+        } catch (IOException ex) {
+            Logger.getLogger(monitoring_frame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnCarregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarregarActionPerformed
             // TODO add your handling code here:
+        DefaultTableModel dtmTabela =(DefaultTableModel) tbStatusMics.getModel();
         clienteMestre.setLoad(true);
+         for(int i=0;i<Quantidade_Divisoes;i++){
+            //String nome_atual_rep = Nome_Arquivo+i;
+            //String[] linha = {nome_atual_rep,"Carregado"};
+            dtmTabela.setValueAt("Carregado",i,1);
+        }
+         presbtnCarregar = true;
     }//GEN-LAST:event_btnCarregarActionPerformed
+
+    private void btnResetarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetarActionPerformed
+        // TODO add your handling code here:
+        if(presbtnComecar){
+            DefaultTableModel dtmTabela =(DefaultTableModel) tbStatusMics.getModel();
+            clienteMestre.setReset(true);
+             for(int i=0;i<Quantidade_Divisoes;i++){
+                //String nome_atual_rep = Nome_Arquivo+i;
+                //String[] linha = {nome_atual_rep,c};
+                //dtmTabela.addRow(linha);
+                dtmTabela.setValueAt("Carregado",i,1);
+            }
+            presbtnComecar=false; 
+        }else{
+            JOptionPane.showMessageDialog(null, "Antes de Resetar os Simuladores é Necessario Começar o Processo","Alerta",JOptionPane.ERROR_MESSAGE);            
+        }
+    }//GEN-LAST:event_btnResetarActionPerformed
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        // TODO add your handling code here:
+        clienteMestre.setFaseClose(true);
+        String comando_de_chamada = "java -jar EPCMP-1.0.jar ";
+        //System.out.println(comando_de_chamada);
+        //Alterar o caminho do app
+        //String cmd_Mic[] = {"cmd.exe","/c","cd lib\\Ferramentas\\Next && "+comando_de_chamada};
+        /*try {
+            Process process_Mic = Runtime.getRuntime().exec(cmd_Mic);
+        } catch (IOException ex) {
+            Logger.getLogger(monitoring_frame.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        String a1[]={};
+        EPCMP.main(a1);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        /*try {
+            clienteMestre.fechar_conexao();
+        } catch (IOException ex) {
+            Logger.getLogger(monitoring_frame.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        //System.exit(0);
+        dispose();
+    }//GEN-LAST:event_btnVoltarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -239,7 +337,9 @@ public class monitoring_frame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCarregar;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnResetar;
     private javax.swing.JButton btnStart;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbNumeroNucleos;

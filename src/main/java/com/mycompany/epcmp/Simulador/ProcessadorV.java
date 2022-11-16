@@ -24,7 +24,7 @@ public class ProcessadorV extends Thread{
         String comando_de_chamada = "java -jar Mic1MMV.jar "+endereco+" "+PORTA;
         //System.out.println(comando_de_chamada);
         //Alterar o caminho do app
-        String cmd_Mic[] = {"cmd.exe","/c","cd ferramentas\\Mic1MMV2 && "+comando_de_chamada};
+        String cmd_Mic[] = {"cmd.exe","/c","cd lib && "+comando_de_chamada};
         Process process_Mic = Runtime.getRuntime().exec(cmd_Mic);
     }
 

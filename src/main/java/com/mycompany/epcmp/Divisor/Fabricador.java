@@ -40,7 +40,7 @@ public class Fabricador {
         }
     }
 
-    public void criar_arquivos() throws IOException {
+  public void criar_arquivos(int correcao) throws IOException {
         setInicio_e_Fim_do_Loop();
         int quantidade_de_linhas_antes_loop = linha_de_inicio_loop+1;
         int quantidade_de_linhas_depois_loop = conteudo_completo_arquivo.length - linha_de_fim_loop;
@@ -49,7 +49,11 @@ public class Fabricador {
         }
         int i;
         int total_linhas;
-        for(i=0;i<(loops.length);i++){
+        int intervalo =loops.length;
+        if(correcao != 0){
+            intervalo = correcao+1;
+        }
+        for(i=0;i<(intervalo);i++){
             total_linhas = (quantidade_de_linhas_antes_loop+quantidade_de_linhas_depois_loop+loops[i].conteudo_loop.length)-1;
             //System.out.println("Loop "+i+" t: "+total_linhas);
             String[] novo_conteudo = new String[total_linhas];
@@ -64,8 +68,8 @@ public class Fabricador {
             }
             int primeiro = 0;
             for(String l:loops[i].conteudo_loop){
-                novo_conteudo[p] = l;
-                p++;
+                    novo_conteudo[p] = l;
+                    p++;
 
             }
             if(quantidade_de_linhas_depois_loop == 1){

@@ -17,7 +17,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 
 /**
  *
@@ -133,7 +136,7 @@ public class start_main extends javax.swing.JFrame {
            File file = fileChooser.getSelectedFile();
            if(file != null){
                tfCaminhoArquivo.setText(file.toString());
-           } 
+           }
         }     
     }//GEN-LAST:event_btnEscolherArquivoActionPerformed
 
@@ -144,49 +147,59 @@ public class start_main extends javax.swing.JFrame {
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
         // TODO add your handling code here:
-        int quantidade__nucleos = Integer.valueOf(cbQuantNucleos.getSelectedItem().toString());
-        String cmd_rodar_clite = "java CodeGen "+tfCaminhoArquivo.getText();
-        System.out.println(cmd_rodar_clite);
-        String cmd[] = {"cmd.exe","/c","cd ferramentas\\Clite-Alterado\\out\\production\\Clite-CliteFCodeGen && "+cmd_rodar_clite};
-        try {
-            Process process_clite = Runtime.getRuntime().exec(cmd);
-        } catch (IOException ex) {
-            Logger.getLogger(start_main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
-        String caminho_arquivo_jas_gerado = tfCaminhoArquivo.getText().substring(0, tfCaminhoArquivo.getText().length()-4) + ".jas";
-        System.out.println(caminho_arquivo_jas_gerado);
-        
-         try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        int numeros_de_arquivos_gerados;
-        try {
-            numeros_de_arquivos_gerados = dividir_arquivo(caminho_arquivo_jas_gerado);
-            ProcessadorV[] processadores = new ProcessadorV[numeros_de_arquivos_gerados];
-            for(int i=0;i<numeros_de_arquivos_gerados;i++){
-                String caminho_arquivos = caminho_arquivo_jas_gerado.substring(0, caminho_arquivo_jas_gerado.length()-4)+i+".jas";
-                System.out.println(caminho_arquivos);
-                processadores[i] = new ProcessadorV(i,caminho_arquivos,(PORTA+i));
-                processadores[i].run();
-            }
+        String cam = tfCaminhoArquivo.getText();
+        //System.out.print(cam);
+        if(!cam.isBlank()){
+            int quantidade__nucleos = Integer.valueOf(cbQuantNucleos.getSelectedItem().toString());
+            String cmd_rodar_clite = "java -jar Clite-CliteFCodeGen.jar "+tfCaminhoArquivo.getText();
+            //System.out.println(cmd_rodar_clite);
+            String cmd[] = {"cmd.exe","/c","cd lib && "+cmd_rodar_clite};
             try {
-                TimeUnit.SECONDS.sleep(2);
+                Process process_clite = Runtime.getRuntime().exec(cmd);
+            } catch (IOException ex) {
+                Logger.getLogger(start_main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+            String caminho_arquivo_jas_gerado = tfCaminhoArquivo.getText().substring(0, tfCaminhoArquivo.getText().length()-4) + ".jas";
+            //System.out.println(caminho_arquivo_jas_gerado);
+
+             try {
+                TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            String comando_de_chamada = "java -jar EPCMP-1.0.jar parte "+numeros_de_arquivos_gerados+" "+PORTA;
-            String cmd_NEXT[] = {"cmd.exe","/c","cd ferramentas\\Next && "+comando_de_chamada};
-            Process process_NEXT = Runtime.getRuntime().exec(cmd_NEXT);
-        } catch (IOException ex) {
-            Logger.getLogger(start_main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //new monitoring_frame().setVisible(true);
+            int numeros_de_arquivos_gerados;
+            try {
+                numeros_de_arquivos_gerados = dividir_arquivo(caminho_arquivo_jas_gerado);
+                ProcessadorV[] processadores = new ProcessadorV[numeros_de_arquivos_gerados];
+                for(int i=0;i<numeros_de_arquivos_gerados;i++){
+                    String caminho_arquivos = caminho_arquivo_jas_gerado.substring(0, caminho_arquivo_jas_gerado.length()-4)+i+".jas";
+                    //System.out.println(caminho_arquivos);
+                    processadores[i] = new ProcessadorV(i,caminho_arquivos,(PORTA+i));
+                    processadores[i].run();
+                }
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                //String comando_de_chamada = "java -jar EPCMP-1.0.jar parte "+numeros_de_arquivos_gerados+" "+PORTA;
+                //String cmd_NEXT[] = {"cmd.exe","/c","cd lib  && "+comando_de_chamada};
+                //Process process_NEXT = Runtime.getRuntime().exec(cmd_NEXT);
+                String a1[] = {"parte",String.valueOf(numeros_de_arquivos_gerados),String.valueOf(PORTA)};
+                EPCMP.main(a1);
+            } catch (IOException ex) {
+                Logger.getLogger(start_main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //new monitoring_frame().setVisible(true);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            //System.exit(0);
+            dispose();
+        }else{
+            JOptionPane.showMessageDialog(null, "O Campo Referente ao Caminho do Arquivo Não Pode Ser Nulo","Alerta",JOptionPane.ERROR_MESSAGE);
         
-        dispose();
+        }
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     /**
@@ -255,7 +268,7 @@ public class start_main extends javax.swing.JFrame {
             //System.out.println(destino_arquivos);
             String nome_arquivo = pegar_nome(caminho_arquivo_jas);
             Fabricador fabricador = new Fabricador(nome_arquivo,leitura,newloops,destino_arquivos);
-            fabricador.criar_arquivos();
+            fabricador.criar_arquivos(loop.erro);
             return newloops.length;
         }
         return -1;

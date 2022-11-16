@@ -10,6 +10,8 @@ com\mycompany\epcmp\start_main$3.class
 com\mycompany\epcmp\Divisor\Fabricador.class
 com\mycompany\epcmp\Divisor\Loop.class
 com\mycompany\epcmp\EPCMP.class
+com\mycompany\epcmp\monitoring_frame$7.class
+com\mycompany\epcmp\monitoring_frame$8.class
 com\mycompany\epcmp\start_main$4.class
 com\mycompany\epcmp\Comunicacao\ClienteMestre.class
 com\mycompany\epcmp\monitoring_frame$1.class

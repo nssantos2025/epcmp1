@@ -15,7 +15,7 @@ import java.net.Socket;
  * @author natha
  */
 public class ClienteMestre extends Thread {
-    private static boolean Start=false,Close=false, Load=false;
+    private static boolean Start=false,Close=false, Load=false, Reset=false;
     private int Porta;
     private int quant_server;
     private String PROXY = "127.0.0.1";
@@ -67,7 +67,7 @@ public class ClienteMestre extends Thread {
     public void run() {
         super.run();
         try {
-            int i_Start=0,i_Load=0;
+            int i_Start=0,i_Load=0, i_Reset=0, i_Close=0;
             while(true) {
                 //Logica de Enviar mensagem deve ser feita aqui
                 socket.setSoTimeout(1000000);
@@ -78,6 +78,12 @@ public class ClienteMestre extends Thread {
                 }else if(Start && i_Start ==0){
                     enviar_mensagem("Start");
                     i_Start=1;
+                }else if(Reset && i_Reset ==0){
+                    enviar_mensagem("Reset");
+                    i_Reset=1;
+                }else if(Close && i_Close ==0){
+                    enviar_mensagem("Close");
+                    i_Close=1;
                 }else{
                     enviar_mensagem("Default");
                 }
@@ -86,6 +92,12 @@ public class ClienteMestre extends Thread {
                 }
                 if(!Start){
                     i_Start=0;
+                }
+                if(!Reset){
+                    i_Reset=0;
+                }
+                if(!Close){
+                    i_Close=0;
                 }
             }
         } catch (IOException e) {
@@ -102,6 +114,8 @@ public class ClienteMestre extends Thread {
            System.out.println(msg);
            if(msg.equals("Load Iniciado")){ setLoad(false); }
            if(msg.equals("Start Iniciado")){ setFaseStart(false); }
+           if(msg.equals("Resetado")){ setReset(false); }
+           if(msg.equals("Fechado")){ setFaseClose(false); }
         }
     }
 
@@ -118,5 +132,12 @@ public class ClienteMestre extends Thread {
     public void setLoad(boolean b) {
         Load = b;
     }
+
+    public static void setReset(boolean Reset) {
+        ClienteMestre.Reset = Reset;
+    }
     
+    public void fechar_conexao() throws IOException{
+        socket.close();
+    }
 }
